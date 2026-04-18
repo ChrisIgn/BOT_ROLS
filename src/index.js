@@ -13,7 +13,20 @@ const path = require('path'); // Importamos path para manejar rutas
 
 // --- SOLUCIÓN AL ERROR DE MÓDULO ---
 // Usamos path.join y __dirname para asegurar que encuentre el archivo en la raíz
-const config = require(path.join(process.cwd(), 'config.json'));
+const config = {
+    canalReglas: process.env.CANAL_REGLAS,
+    rolMiembro: process.env.ROL_MIEMBRO,
+    canalLogs: process.env.CANAL_LOGS,
+    canalBienvenida: process.env.CANAL_BIENVENIDA,
+    rolesExentos: process.env.ROLES_EXENTOS ? process.env.ROLES_EXENTOS.split(',') : [],
+    rolesJuegos: {
+        valorant: process.env.ROL_VALORANT,
+        lol: process.env.ROL_LOL,
+        tft: process.env.ROL_TFT,
+        dbd: process.env.ROL_DBD,
+        roblox: process.env.ROL_ROBLOX
+    }
+};
 
 const { createCanvas, loadImage } = require('canvas');
 
