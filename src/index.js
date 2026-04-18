@@ -9,7 +9,12 @@ const {
     AttachmentBuilder
 } = require('discord.js');
 require('dotenv').config();
-const config = require('../config.json');
+const path = require('path'); // Importamos path para manejar rutas
+
+// --- SOLUCIÓN AL ERROR DE MÓDULO ---
+// Usamos path.join y __dirname para asegurar que encuentre el archivo en la raíz
+const config = require(path.join(process.cwd(), 'config.json'));
+
 const { createCanvas, loadImage } = require('canvas');
 
 const client = new Client({
@@ -163,7 +168,6 @@ client.on('messageCreate', async (message) => {
     const tieneRolVerificado = message.member.roles.cache.has(config.rolMiembro);
     const esStaff = message.member.permissions.has('Administrator') || message.member.permissions.has('ManageMessages');
     
-    // Verificación de roles exentos desde el config
     const esExento = config.rolesExentos?.some(id => message.member.roles.cache.has(id));
 
     if (!esCanalReglas && !tieneRolVerificado && !esStaff && !esExento) {
@@ -178,7 +182,6 @@ client.on('messageCreate', async (message) => {
 
 /**
  * EVENTO: interactionCreate
- * Maneja Verificación y Auto-Roles (Toggle).
  */
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isButton()) return;
@@ -186,7 +189,6 @@ client.on('interactionCreate', async (interaction) => {
     const { customId, member, guild, user } = interaction;
     const canalLogs = guild.channels.cache.get(config.canalLogs);
 
-    // LÓGICA VERIFICACIÓN
     if (customId === 'verificar_usuario') {
         const rolV = guild.roles.cache.get(config.rolMiembro);
         if (!rolV) return interaction.reply({ content: '❌ Rol no configurado.', ephemeral: true });
@@ -218,7 +220,6 @@ client.on('interactionCreate', async (interaction) => {
         }
     }
 
-    // LÓGICA AUTO-ROLES
     if (customId.startsWith('role_')) {
         const juego = customId.split('_')[1];
         const rolId = config.rolesJuegos[juego];
